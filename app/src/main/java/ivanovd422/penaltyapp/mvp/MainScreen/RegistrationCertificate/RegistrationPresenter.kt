@@ -9,11 +9,8 @@ class RegistrationPresenter: BasePresenter<RegistrationContract.View>(), Registr
 
     var CERTIFICATE_CONFRIMED : Boolean = false
 
-
     override fun checkData(data: String) {
-        Log.d("tag", "flag - $CERTIFICATE_CONFRIMED")
         if (CERTIFICATE_CONFRIMED){
-            Log.d("tag", "Отпрвляем данные и переходим на след фрагмент")
             viewState.passData(data)
         }
     }

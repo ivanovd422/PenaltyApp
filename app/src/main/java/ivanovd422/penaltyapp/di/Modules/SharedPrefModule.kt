@@ -2,6 +2,7 @@ package ivanovd422.penaltyapp.di.Modules
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.support.annotation.Nullable
 import dagger.Module
 import dagger.Provides
 import ivanovd422.penaltyapp.App
@@ -14,7 +15,8 @@ class SharedPrefModule{
 
     @Provides
     @Singleton
-     fun providePreferences (context : Context): SharedPreferences? {
+     fun providePreferences (context : App): SharedPreferences {
+//        context.getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         return context.getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
     }
 }

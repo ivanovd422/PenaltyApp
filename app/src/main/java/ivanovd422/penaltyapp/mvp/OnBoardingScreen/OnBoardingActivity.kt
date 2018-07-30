@@ -1,5 +1,6 @@
 package ivanovd422.penaltyapp.mvp.OnBoardingScreen
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
@@ -8,6 +9,7 @@ import android.view.View
 import android.widget.ImageView
 import com.arellomobile.mvp.MvpAppCompatActivity
 import ivanovd422.penaltyapp.R
+import ivanovd422.penaltyapp.mvp.DataScreen.DataActivity
 import ivanovd422.penaltyapp.mvp.OnBoardingScreen.Adapter.BoardingAdapter
 import kotlinx.android.synthetic.main.activity_pager.*
 import java.text.FieldPosition
@@ -28,6 +30,12 @@ class OnBoardingActivity : MvpAppCompatActivity(){
                 intro_indicator_3, intro_indicator_4, intro_indicator_5)
 
 
+        finish_container.setOnClickListener({
+            val intent = Intent(this, DataActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+        })
 
         pagerAdapter = BoardingAdapter(supportFragmentManager)
         container.adapter = pagerAdapter

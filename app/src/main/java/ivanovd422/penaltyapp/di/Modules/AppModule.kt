@@ -1,15 +1,19 @@
 package ivanovd422.penaltyapp.di.Modules
 
+import android.app.Application
 import android.content.Context
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.android.support.AndroidSupportInjectionModule
 import ivanovd422.penaltyapp.App
 import javax.inject.Singleton
 
 
-@Module
-class AppModule() {
-    @Provides
+@Module(includes = arrayOf(AndroidSupportInjectionModule::class))
+abstract class AppModule {
+
     @Singleton
-    fun provideApplication(app : App): Context = app
+    @Binds
+    abstract fun provideContext(app: App): Context
 }
