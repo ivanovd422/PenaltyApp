@@ -15,6 +15,7 @@ import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
+import dagger.android.support.HasSupportFragmentInjector
 import ivanovd422.penaltyapp.R
 import ivanovd422.penaltyapp.R.id.toolbar
 import ivanovd422.penaltyapp.mvp.MainScreen.AutoCertificate.AutoCertificateFragment
@@ -27,22 +28,22 @@ class MainActivity : MvpAppCompatActivity(), MainScreenContract.View,
         AutoCertificateFragment.SkipFragment, AutoCertificateFragment.AutoCertificateData,
         RegistrationFragment.SkipFragment, RegistrationFragment.RegistrationData,
         DriverLicenseFragment.DriverLicenseData, DriverLicenseFragment.SkipFragment,
-        HasActivityInjector {
+        HasActivityInjector, HasSupportFragmentInjector {
 
     @Inject
     lateinit var activityInjector : DispatchingAndroidInjector<Activity>
 
     @Inject
-    lateinit var sharedPref : SharedPreferences
+    lateinit var fragmentInjector : DispatchingAndroidInjector<Fragment>
 
+    @Inject
     @InjectPresenter
-    lateinit var mPresenter: Presenter
+    lateinit var presenter: Presenter
 
     @ProvidePresenter
-    fun providePresenter(): Presenter{
-        return Presenter(sharedPref)
+    fun providePresenter(): Presenter  {
+        return presenter
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -81,7 +82,7 @@ class MainActivity : MvpAppCompatActivity(), MainScreenContract.View,
     }
 
     override fun onSkipFragment() {
-        mPresenter.viewState.addNextFragment()
+        presenter.fragmentSkipped()
     }
 
     override fun addNextFragment() {
@@ -98,7 +99,7 @@ class MainActivity : MvpAppCompatActivity(), MainScreenContract.View,
                     .commit()
             else -> {
 
-                mPresenter.saveData()
+                presenter.saveData()
 
                 val intent = Intent(this, OnBoardingActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -110,21 +111,21 @@ class MainActivity : MvpAppCompatActivity(), MainScreenContract.View,
     }
 
     override fun passCertificateData(data: String) {
-        mPresenter.autoCertificateData = data
-        mPresenter.viewState.addNextFragment()
+        presenter.autoCertificateData = data
+        presenter.fragmentSkipped()
     }
 
     override fun passRegistrationData(data: String) {
-        mPresenter.registrationCertificateData = data
-        mPresenter.viewState.addNextFragment()
+        presenter.registrationCertificateData = data
+        presenter.fragmentSkipped()
     }
 
     override fun passDriverLicenseData(data: String) {
-        mPresenter.driverLicenseData = data
-        mPresenter.viewState.addNextFragment()
+        presenter.driverLicenseData = data
+        presenter.fragmentSkipped()
     }
 
     override fun activityInjector(): AndroidInjector<Activity> = activityInjector
 
-
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentInjector
 }

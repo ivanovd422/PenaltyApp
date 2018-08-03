@@ -8,24 +8,32 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 
 interface AutoCertificateContract {
 
-    @StateStrategyType(value = AddToEndSingleStrategy::class)
-    interface View : MvpView {
+     @StateStrategyType(value = AddToEndSingleStrategy::class)
+     interface View : MvpView {
 
-    fun showDialog()
+        fun showDialog()
 
-    fun dismissDialog()
-
+        fun dismissDialog()
 
         @StateStrategyType(value = SkipStrategy::class)
-    fun passData(data: String)
+        fun passData(data: String)
 
         @StateStrategyType(value = SkipStrategy::class)
         fun onSkipStage()
 
+        fun showTextError()
     }
 
     interface Presenter{
 
-        fun checkData(data : String)
+        fun isDataValid()
+
+        fun enteredText(data: String)
+
+        fun onDialogPositiveButton()
+
+        fun onDialogNegativeButton()
+
+        fun onDialogDismiss()
     }
 }

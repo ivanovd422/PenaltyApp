@@ -8,12 +8,11 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 interface DriverLicenseContract {
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
-    interface View : MvpView {
+       interface View : MvpView {
 
         fun showDialog()
 
         fun dismissDialog()
-
 
         @StateStrategyType(value = SkipStrategy::class)
         fun onSkipStage()
@@ -21,10 +20,20 @@ interface DriverLicenseContract {
         @StateStrategyType(value = SkipStrategy::class)
         fun passData(data: String)
 
+        fun showTextError()
+
     }
 
     interface Presenter{
 
-        fun checkData(data : String)
+        fun isDataValid()
+
+        fun enteredText(data: String)
+
+        fun onDialogPositiveButton()
+
+        fun onDialogNegativeButton()
+
+        fun onDialogDismiss()
     }
 }

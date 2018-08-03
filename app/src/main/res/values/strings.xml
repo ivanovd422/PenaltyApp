@@ -2,6 +2,7 @@
     <string name="app_name">PenaltyApp</string>
     <string name="reg_numb">Укажите регистрационный номер ТС</string>
     <string name="incorrect_numb">Неверный номерной знак</string>
+    <string name="incorrect_doc_numb">Неверный номер документа</string>
     <string name="certificate_text">Введите номер свидетельства о регистрации ТС</string>
     <string name="driver_license_text">Введите номер водительского удостоверения</string>
     <string name="auto_dialog_msg">Если вы не введете регистрационный номер ТС, то вы не сможете следить за штрафами, выписанными на автомобиль</string>

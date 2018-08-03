@@ -20,10 +20,20 @@ interface RegistrationContract {
         @StateStrategyType(value = SkipStrategy::class)
         fun passData(data: String)
 
+        fun showTextError()
+
     }
 
     interface Presenter{
 
-        fun checkData(data : String)
+        fun isDataValid()
+
+        fun enteredText(data: String)
+
+        fun onDialogPositiveButton()
+
+        fun onDialogNegativeButton()
+
+        fun onDialogDismiss()
     }
 }

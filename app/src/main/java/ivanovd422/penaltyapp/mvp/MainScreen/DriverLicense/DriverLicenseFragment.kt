@@ -3,6 +3,7 @@ package ivanovd422.penaltyapp.mvp.MainScreen.DriverLicense
 
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,30 +13,46 @@ import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.HasSupportFragmentInjector
 import ivanovd422.penaltyapp.Extensions.inflate
 import ivanovd422.penaltyapp.R
 import ivanovd422.penaltyapp.mvp.MainScreen.AutoCertificate.AutoCertificateFragment
 import ivanovd422.penaltyapp.mvp.MainScreen.AutoCertificate.AutoCertificatePresenter
 import kotlinx.android.synthetic.main.registration_layout.*
+import javax.inject.Inject
 
-class DriverLicenseFragment: MvpAppCompatFragment(), DriverLicenseContract.View{
+class DriverLicenseFragment: MvpAppCompatFragment(), DriverLicenseContract.View,
+        HasSupportFragmentInjector {
 
+    @Inject
+    lateinit var fragmentInjector : DispatchingAndroidInjector<Fragment>
+
+
+    @Inject
     @InjectPresenter
     lateinit var presenter:DriverLicensePresenter
+
+
+    @ProvidePresenter
+    fun providePresenter(): DriverLicensePresenter  {
+        return presenter
+    }
+
+
     private var dialog: AlertDialog? = null
     lateinit var driverLicenseData : DriverLicenseData
     lateinit var skipFragment : SkipFragment
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return container?.inflate(R.layout.driver_license_layout)
     }
 
     override fun onAttach(context: Context?) {
+        AndroidSupportInjection.inject(this)
         super.onAttach(context)
         driverLicenseData = context as DriverLicenseData
         skipFragment = context as SkipFragment
@@ -45,44 +62,19 @@ class DriverLicenseFragment: MvpAppCompatFragment(), DriverLicenseContract.View{
         super.onActivityCreated(savedInstanceState)
 
         skip_btn.setOnClickListener{presenter.viewState.showDialog()}
-        continue_btn.setOnClickListener{presenter.checkData(auto_et.text.toString())}
-
-        val numbers: Array<String> = arrayOf("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
-        val fullChars: Array<String> = arrayOf("А", "В", "Е", "К", "М", "Н", "О", "Р", "K", "К",
-                "С", "Т", "У", "Х", "A", "B", "E", "M", "H", "O", "P", "C", "T", "Y", "X", "0",
-                "1", "2", "3", "4", "5", "6", "7", "8", "9")
+        continue_btn.setOnClickListener{presenter.isDataValid()}
 
         auto_et.addTextChangedListener(object : TextWatcher {
-
             override fun afterTextChanged(p0: Editable) {
 
                 if (!p0.toString().equals(p0.toString().toUpperCase())){
-                    var text = p0.toString().toUpperCase()
+                    val text = p0.toString().toUpperCase()
                     auto_et.setText(text)
                     auto_et.setSelection(text.length)
                 }
+                val numb = p0.toString().replace(" ", "")
 
-                var numb = p0.toString().replace(" ", "")
-
-                if (numb.length > 10){
-                    auto_et.error = resources.getString(R.string.incorrect_numb)
-                    presenter.CERTIFICATE_CONFRIMED = false
-
-                }  else  if (numb.length < 10){
-                    presenter.CERTIFICATE_CONFRIMED = false
-                } else{
-
-                    if (numbers.contains(numb[0].toString()) and numbers.contains(numb[1].toString())
-                            and fullChars.contains(numb[2].toString()) and fullChars.contains(numb[3].toString())
-                            and numbers.contains(numb[4].toString()) and numbers.contains(numb[5].toString())
-                            and numbers.contains(numb[6].toString()) and numbers.contains(numb[7].toString())
-                            and numbers.contains(numb[8].toString()) and numbers.contains(numb[9].toString())){
-                        presenter.CERTIFICATE_CONFRIMED = true
-                    } else{
-                        auto_et.error = resources.getString(R.string.incorrect_numb)
-                        presenter.CERTIFICATE_CONFRIMED = false
-                    }
-                }
+                presenter.enteredText(numb)
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -98,14 +90,14 @@ class DriverLicenseFragment: MvpAppCompatFragment(), DriverLicenseContract.View{
         val builder = AlertDialog.Builder(this.requireContext())
                 .setMessage(getString(R.string.auto_dialog_msg))
                 .setPositiveButton("Пропустить", { dialog, i ->
-                    presenter.viewState.dismissDialog()
-                    presenter.viewState.onSkipStage()
+                    presenter.onDialogPositiveButton()
+
                 })
                 .setNegativeButton("ВВЕСТИ НОМЕР", {dialog, i ->
-                    presenter.viewState.dismissDialog()
+                    presenter.onDialogNegativeButton()
                 })
                 .setOnDismissListener({
-                    presenter.viewState.dismissDialog()
+                    presenter.onDialogDismiss()
                 })
         dialog = builder.create()
         dialog?.show()
@@ -130,4 +122,11 @@ class DriverLicenseFragment: MvpAppCompatFragment(), DriverLicenseContract.View{
     override fun passData(data: String) {
         driverLicenseData.passDriverLicenseData(data)
     }
+
+
+    override fun showTextError() {
+        auto_et.error = resources.getString(R.string.incorrect_doc_numb)
+    }
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentInjector
 }

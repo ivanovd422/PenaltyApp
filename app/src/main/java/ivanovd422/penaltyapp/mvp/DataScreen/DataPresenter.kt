@@ -1,28 +1,34 @@
 package ivanovd422.penaltyapp.mvp.DataScreen
 
-import android.content.SharedPreferences
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
-import ivanovd422.penaltyapp.Utils.Constants.Companion.AUTO_CERTIFICATE
-import ivanovd422.penaltyapp.Utils.Constants.Companion.AUTO_REGISTRATION
-import ivanovd422.penaltyapp.Utils.Constants.Companion.DRIVER_LICENSE
 import ivanovd422.penaltyapp.mvp.Base.BasePresenter
 import javax.inject.Inject
 
 
 @InjectViewState
-class DataPresenter @Inject constructor(val sharedPreferences: SharedPreferences) :
+class DataPresenter @Inject constructor(val dataInteractor: DataInteractor):
         BasePresenter<DataContract.View>(), DataContract.Presenter{
 
-    lateinit var autoCertificateData : String
-    lateinit var autoRegistrationCertificate : String
-    lateinit var autoDriverLicense : String
+     var autoCertificateData : String = ""
+     var autoRegistrationCertificate : String = ""
+     var autoDriverLicense : String = ""
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        autoCertificateData = sharedPreferences.getString(AUTO_CERTIFICATE, "")
-        autoRegistrationCertificate = sharedPreferences.getString(AUTO_REGISTRATION, "")
-        autoDriverLicense = sharedPreferences.getString(DRIVER_LICENSE, "")
+
+        if (dataInteractor.getCars().blockingGet().isNotEmpty()){
+            autoCertificateData = dataInteractor.getCars().blockingGet()[0].govNumb
+            autoRegistrationCertificate = dataInteractor.getCars().blockingGet()[0].stsNumb
+        }
+
+
+        if (dataInteractor.getDriverLicenses().blockingGet().isNotEmpty()){
+            autoDriverLicense = dataInteractor.getDriverLicenses().blockingGet()[0].numb
+        }
+
+
+
+
     }
 
     override fun attachView(view: DataContract.View?) {

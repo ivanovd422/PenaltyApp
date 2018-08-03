@@ -20,15 +20,14 @@ class DataActivity: MvpAppCompatActivity(),  DataContract.View,
         HasActivityInjector {
 
     @Inject
-    lateinit var sharedPref : SharedPreferences
-
     @InjectPresenter
     lateinit var presenter: DataPresenter
 
     @ProvidePresenter
-    fun providePresenter(): DataPresenter{
-        return DataPresenter(sharedPref)
+    fun providePresenter(): DataPresenter  {
+        return presenter
     }
+
 
     @Inject
     lateinit var activityInjector : DispatchingAndroidInjector<Activity>

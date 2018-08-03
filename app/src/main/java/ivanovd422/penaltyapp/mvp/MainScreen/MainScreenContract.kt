@@ -22,5 +22,7 @@ interface MainScreenContract {
     interface Presenter{
 
         fun saveData()
+
+        fun fragmentSkipped()
     }
 }
